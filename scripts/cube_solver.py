@@ -226,6 +226,7 @@ def image_cb(msg):
             fsm.stateTransition()
         elif key == ord('x'):
             fsm.robot.addCommand("(send *ri* :angle-vector (send *robot* :init-pose))")
+            fsm.robot.addCommand("(send *ri* :wait-interpolation)")
             fsm.robot.addCommand("(send *ri* :servo-off)")
             send_command(fsm.robot)
         elif key == ord('a'):

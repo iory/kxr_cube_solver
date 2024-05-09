@@ -14,18 +14,11 @@
   <!--   </rosparam> -->
   <!-- </node> -->
 
-  <node name="kxr_command_server"
-        pkg="kxr_cube_solver" type="command-server.l"
-        output="screen" >
+  <node name="cube_solver"
+        pkg="kxr_cube_solver" type="cube_solver.py"
+        output="screen">
+    <remap from="~image_in" to="$(arg image_topic_name)"/>
   </node>
 
-  <!-- <node name="cube_solver" -->
-  <!--       pkg="kxr_cube_solver" type="cube_solver.py" -->
-  <!--       output="screen"> -->
-  <!--   <remap from="~image_in" to="$(arg image_topic_name)"/> -->
-  <!-- </node> -->
-
-  <include file="$(find kxr_cube_solver)/launch/sound_play.launch" >
-  </include>
 
 </launch>

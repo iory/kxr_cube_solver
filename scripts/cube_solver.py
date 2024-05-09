@@ -13,8 +13,8 @@ import random
 from threading import Thread
 import subprocess
 
-def sendCommand(robot):
-    srv_name = "/roseus_command_server/send_command"
+def send_command(robot):
+    srv_name = "/kxr_command_server/send_command"
     try:
         rospy.wait_for_service(srv_name)
         srv_prox = rospy.ServiceProxy(srv_name, SendCommand)
@@ -27,9 +27,11 @@ def sendCommand(robot):
         print("Service call failed: %s"%e)
         return None
 
+
 def speak(msg):
     subprocess.run("echo %s | open_jtalk -m /usr/share/hts-voice/mei/mei_normal.htsvoice -x /var/lib/mecab/dic/open-jtalk/naist-jdic/ -ow /tmp/voice.wav"%msg, shell=True)
     subprocess.run("aplay /tmp/voice.wav", shell=True)
+
 
 def cube2string(faces):
     indexes = vision.faces2sequence(faces)
@@ -42,7 +44,9 @@ def cube2string(faces):
         ret += colorIndex2character[i]
     return ret
 
-class cubeSolverFSM:
+
+class CubeSolverFSM(object):
+
     def __init__(self):
         self.transitTo("init", 0)
         self.autoTransition = False
@@ -69,7 +73,7 @@ class cubeSolverFSM:
         self.speakProc.start()
 
     def move(self):
-        self.moveProc = Thread(target=sendCommand, args=(self.robot,))
+        self.moveProc = Thread(target=send_command, args=(self.robot,))
         self.moveProc.start()
 
     def run(self, frame):
@@ -150,7 +154,7 @@ class cubeSolverFSM:
             if not self.finish and not self.isSpeaking():
                 self.speak("完成しました")
                 self.robot.finishDemo()
-                sendCommand(self.robot)
+                send_command(self.robot)
                 self.autoTransition = False
                 self.finish = True
 
@@ -205,7 +209,7 @@ class cubeSolverFSM:
         elif self.state == "end":
             self.transitTo("start")
 
-fsm = cubeSolverFSM()
+fsm = CubeSolverFSM()
 
 def image_cb(msg):
     bridge = CvBridge()
@@ -217,17 +221,18 @@ def image_cb(msg):
 
         key = cv2.waitKey(10) & 0xff
         if key == ord('e'):
+            fsm.robot.addCommand("(send *ri* :servo-on)")
             fsm.robot.addCommand("(init-pose)")
-            sendCommand(fsm.robot)
+            send_command(fsm.robot)
             fsm.autoTransition = False
             fsm.finish = True
             fsm.state = "end"
         elif key == ord('n'):
             fsm.stateTransition()
         elif key == ord('x'):
-            fsm.robot.addCommand("(send *ri* :neutral)")
-            fsm.robot.addCommand("(send *ri* :free)")
-            sendCommand(fsm.robot)
+            fsm.robot.addCommand("(send *ri* :angle-vector (send *robot* :init-pose))")
+            fsm.robot.addCommand("(send *ri* :servo-off)")
+            send_command(fsm.robot)
         elif key == ord('a'):
             fsm.autoTransition = not fsm.autoTransition
         elif key == ord('s'):
@@ -236,7 +241,8 @@ def image_cb(msg):
         print(e)
         return
 
+
 if __name__ == "__main__":
-    rospy.init_node("cubeSolver")
+    rospy.init_node("cube_solver")
     rospy.Subscriber("~image_in", Image, image_cb, queue_size=1)
     rospy.spin()

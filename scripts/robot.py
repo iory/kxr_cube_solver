@@ -55,9 +55,9 @@ class gripper:
             self.regrasp(-90)
         elif angle == -90 and self.angle == -90:
             self.regrasp(90)
-            
         self.setAngle(self.angle + angle)
-    
+
+
 class cubeSolver:
     def __init__(self):
         self.gripperR = gripper(":rarm", self)
@@ -173,7 +173,7 @@ class cubeSolver:
         self.gripperL.grasp()
 
     def initDemo(self):
-        self.addCommand("(send *ri* :hold)")
+        self.addCommand("(send *ri* :servo-on)")
         self.addCommand("(init-pose)")
 
     def startDemo(self):

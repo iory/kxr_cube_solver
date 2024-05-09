@@ -11,11 +11,13 @@
 
 (defun grasp(arm)
   (gripper-angle arm 23)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 500))
+  (send *ri* :angle-vector (send *robot* :angle-vector) 500)
+  (send *ri* :wait-interpolation))
 
 (defun release(arm)
   (gripper-angle arm 55)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 200))
+  (send *ri* :angle-vector (send *robot* :angle-vector) 200)
+  (send *ri* :wait-interpolation))
 
 (defun angle(arm angle)
   (let ((angle (+ angle (if (eq arm :rarm) *rwr-offset* *lwr-offset*)))
@@ -24,7 +26,8 @@
     (setq da (- angle (send wr :joint-angle)))
     (setq n (round (/ (abs da) 30)))
     (send wr :joint-angle angle)
-    (send *ri* :angle-vector (send *robot* :angle-vector) (* n 200))))
+    (send *ri* :angle-vector (send *robot* :angle-vector) (* n 200))
+    (send *ri* :wait-interpolation)))
 
 (defun init-pose()
   (setq *rwr-offset* 11)
@@ -44,7 +47,8 @@
   (send *robot* :head-neck-p :joint-angle 15)
   (gripper-angle :rarm 30)
   (gripper-angle :larm 30)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 3000))
+  (send *ri* :angle-vector (send *robot* :angle-vector) 3000)
+  (send *ri* :wait-interpolation))
 
 (defun command-callback (req)
   (let ((com (send req :command))
@@ -61,7 +65,7 @@
     (ros::sleep)))
 
 (defun demo()
-  (kxr-init)
+  (kxr-init :create-viewer nil)
   (start-command-server))
 
 

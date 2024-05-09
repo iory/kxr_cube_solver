@@ -11,7 +11,8 @@ import robot
 import kociemba
 import random
 from threading import Thread
-import subprocess
+from ros_speak import speak_jp
+
 
 def send_command(robot):
     srv_name = "/kxr_command_server/send_command"
@@ -26,11 +27,6 @@ def send_command(robot):
     except rospy.ServiceException as e:
         print("Service call failed: %s"%e)
         return None
-
-
-def speak(msg):
-    subprocess.run("echo %s | open_jtalk -m /usr/share/hts-voice/mei/mei_normal.htsvoice -x /var/lib/mecab/dic/open-jtalk/naist-jdic/ -ow /tmp/voice.wav"%msg, shell=True)
-    subprocess.run("aplay /tmp/voice.wav", shell=True)
 
 
 def cube2string(faces):
@@ -68,8 +64,10 @@ class CubeSolverFSM(object):
         self.speakProc = None
         self.moveProc = None
 
-    def speak(self, msg):
-        self.speakProc = Thread(target=speak, args=(msg,))
+    def speak(self, msg, wait=True):
+        rospy.loginfo('Speak "{}"'.format(msg))
+        self.speakProc = Thread(target=speak_jp,
+                                args=(msg, 'robotsound_jp', 1, wait))
         self.speakProc.start()
 
     def move(self):
@@ -134,7 +132,7 @@ class CubeSolverFSM(object):
                         self.vision.setFace(faceId, face)
                     else:
                         self.faceDetectionCount = 0
-                    print("faceDetectionCount=",self.faceDetectionCount)
+                    # print("faceDetectionCount=",self.faceDetectionCount)
         elif self.state == "solve":
             if self.start:
                 if not self.isSpeaking():
@@ -151,7 +149,7 @@ class CubeSolverFSM(object):
             if not self.isMoving():
                 self.finish = True
         elif self.state == "end":
-            if not self.finish and not self.isSpeaking():
+            if not self.finish:
                 self.speak("完成しました")
                 self.robot.finishDemo()
                 send_command(self.robot)
@@ -160,9 +158,6 @@ class CubeSolverFSM(object):
 
         if self.autoTransition:
             self.stateTransition()
-
-    def isSpeaking(self):
-        return self.speakProc.is_alive()
 
     def isMoving(self):
         return self.moveProc.is_alive()

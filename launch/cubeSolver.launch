@@ -1,10 +1,16 @@
 <launch>
-  <!-- default topic is for azure kinect -->
+
   <arg name="image_topic_name" default="/camera/color/image_raw"/>
-  
-  <node pkg="kxr_cube_solver" type="cubeSolver.py"
-        name="cubeSolver" output="screen">
+
+  <node name="kxr_command_server"
+        pkg="kxr_cube_solver" type="command-server.l"
+        output="screen" >
+  </node>
+
+  <node name="cube_solver"
+        pkg="kxr_cube_solver" type="cube_solver.py"
+        output="screen">
     <remap from="~image_in" to="$(arg image_topic_name)"/>
   </node>
-  
+
 </launch>

@@ -3,6 +3,16 @@ import numpy as np
 import math
 from helpers import ciede2000, bgr2lab
 import config
+from config import color2index
+from color_classifier import KNNColorClassifier
+
+import datetime
+
+
+def current_time_str(time_format='%Y-%m-%d-%H-%M-%S-%f'):
+    time_str = datetime.datetime.now().strftime(time_format)
+    return time_str
+
 
 def computeROIs(roi_center_x, roi_center_y, roi_size, roi_gap, roi_rotation):
     cth = math.cos(roi_rotation)
@@ -39,6 +49,7 @@ class cubeDetector:
         self.thickness = 2
         self.white = (255,255,255)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.cl = KNNColorClassifier.from_file('/home/iory/color.pkl')
 
         self.initFaces()
 
@@ -100,12 +111,13 @@ class cubeDetector:
         face = []
         for i,roi in enumerate(self.rois):
             img = getROI(frame, roi, self.roi_size)
-            bgr = get_dominant_color(img)
-            cc = get_closest_color(bgr, config.colors)
-            for i,c in enumerate(config.colors):
-                if cc["color_name"] == c[0]:
-                    res = i
-            face.append(res)
+            # bgr = get_dominant_color(img)
+            # cc = get_closest_color(bgr, config.colors)
+            # for i,c in enumerate(config.colors):
+            #     if cc["color_name"] == c[0]:
+            #         res = i
+            probs, colors, indices = self.cl.predict_proba(img)
+            face.append(color2index[colors[0]])
         return face
 
     def drawInfo(self, frame, face, msgs):
@@ -126,7 +138,7 @@ class cubeDetector:
     def saveROIs(self,frame):
         for i,r in enumerate(self.rois):
             img = getROI(frame, r, self.roi_size)
-            cv2.imwrite(str(i)+".png", img)
+            cv2.imwrite('/tmp/cube' + current_time_str() +".png", img)
         print("saved")
 
 # taken from https://github.com/kkoomen/qbr/blob/master/src/colordetection.py
@@ -165,4 +177,3 @@ def get_closest_color(bgr, colors):
         })
     closest = min(distances, key=lambda item: item['distance'])
     return closest
-

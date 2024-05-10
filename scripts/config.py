@@ -9,3 +9,7 @@ colors = [('green',  (65,135,25)),
           ('blue',   (125,75,0)),
           ('red',    (40, 20, 180)),
           ('yellow', (25,165,175))]
+
+color2index = {
+    c[0]: i for i, c in enumerate(colors)
+}

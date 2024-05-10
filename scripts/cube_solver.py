@@ -64,6 +64,9 @@ class CubeSolverFSM(object):
         self.speakProc = None
         self.moveProc = None
 
+    def isSpeaking(self):
+        return self.speakProc.is_alive()
+
     def speak(self, msg, wait=True):
         rospy.loginfo('Speak "{}"'.format(msg))
         self.speakProc = Thread(target=speak_jp,
@@ -209,6 +212,7 @@ fsm = CubeSolverFSM()
 def image_cb(msg):
     bridge = CvBridge()
     frame = None
+    tmp = vision.cubeDetector()
     try:
         frame = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
@@ -232,7 +236,7 @@ def image_cb(msg):
         elif key == ord('a'):
             fsm.autoTransition = not fsm.autoTransition
         elif key == ord('s'):
-            saveROIs(frame)
+            tmp.saveROIs(frame)
     except CvBridgeError as e:
         print(e)
         return

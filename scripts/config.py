@@ -1,6 +1,6 @@
 # position of the center ROI
 roi_center_x = 420
-roi_center_y = 240
+roi_center_y = 230
 
 # colors in BGR
 colors = [('green',  (65,135,25)),

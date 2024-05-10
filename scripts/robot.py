@@ -98,7 +98,6 @@ class cubeSolver:
         g2.grasp()
 
     def rotateFace(self, face, angle):
-        angle = - angle
         if self.graspingFaces['R'] == face:
             self.gripperL.regrasp(0)
             self.gripperR.rotate(angle)

@@ -219,6 +219,7 @@ class CubeSolverFSM(object):
 
 fsm = CubeSolverFSM()
 
+
 def image_cb(msg):
     bridge = CvBridge()
     frame = None
@@ -233,6 +234,8 @@ def image_cb(msg):
             fsm.robot.addCommand("(send *ri* :servo-on)")
             fsm.robot.addCommand("(init-pose)")
             send_command(fsm.robot)
+            fsm.gripperR.angle = 0
+            fsm.gripperL.angle = 0
             fsm.autoTransition = False
             fsm.finish = True
             fsm.state = "end"

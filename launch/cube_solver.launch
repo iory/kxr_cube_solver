@@ -25,7 +25,7 @@
   <!--   <remap from="~image_in" to="$(arg image_topic_name)"/> -->
   <!-- </node> -->
 
-  <include file="$(find kxr_cube_solver)/launch/sound_play.launch" >
-  </include>
+  <!-- <include file="$(find kxr_cube_solver)/launch/sound_play.launch" > -->
+  <!-- </include> -->
 
 </launch>

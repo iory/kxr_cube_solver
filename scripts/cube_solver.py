@@ -185,11 +185,21 @@ class CubeSolverFSM(object):
                     print ("faces:",self.vision.faces)
                     s = cube2string(self.vision.faces)
                     print ("cube state:",s)
-                    s = kociemba.solve(s)
-                    self.solveOperations = s.split(' ')
-                    print ("solution:",self.solveOperations)
-                    self.speak("解き方がわかりました｡"+str(len(self.solveOperations))+"手で解けます。")
-                    self.transitTo("solve", len(self.solveOperations)-1)
+                    valid = True
+                    try:
+                        s = kociemba.solve(s)
+                    except ValueError as e:
+                        print(e)
+                        print("detected cube state is invalid, rescan is necessary")
+                        self.speak("見間違えたみたいです。もう一回みてみますね。")
+                        self.index = 0
+                        self.start = True
+                        valid = False
+                    if valid:
+                        self.solveOperations = s.split(' ')
+                        print ("solution:",self.solveOperations)
+                        self.speak("解き方がわかりました｡"+str(len(self.solveOperations))+"手で解けます。")
+                        self.transitTo("solve", len(self.solveOperations)-1)
                 else:
                     print("detected cube state is invalid, rescan is necessary")
                     self.speak("見間違えたみたいです。もう一回みてみますね。")

@@ -26,7 +26,7 @@
   (send *ri* :wait-interpolation))
 
 (defun angle(arm angle)
-  (let ((angle (+ angle (if (eq arm :rarm) (+ *rwr-offset* -2) *lwr-offset*)))
+  (let ((angle (+ angle (if (eq arm :rarm) (+ *rwr-offset* -2) (- *lwr-offset* 5))))
 	      (wr (send *robot* arm :wrist-r))
 	      da n)
     (setq da (- angle (send wr :joint-angle)))

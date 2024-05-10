@@ -98,6 +98,7 @@ class cubeSolver:
         g2.grasp()
 
     def rotateFace(self, face, angle):
+        angle = - angle
         if self.graspingFaces['R'] == face:
             self.gripperL.regrasp(0)
             self.gripperR.rotate(angle)
@@ -146,30 +147,30 @@ class cubeSolver:
     def lookAt(self, faceId):
         if faceId == 'D':
             self.gripperL.release()
-            self.gripperR.rotate(95)
+            self.gripperR.rotate(-95)
         elif faceId == 'U':
-            self.gripperR.rotate(-185)
+            self.gripperR.rotate(185)
         elif faceId == 'L':
-            self.gripperR.rotate(90)
-            self.gripperL.grasp()
-            self.gripperR.release()
-            self.gripperL.rotate(90)
-        elif faceId == 'R':
-            self.gripperL.rotate(-180)
-        elif faceId == 'B':
-            self.gripperR.grasp()
-            self.gripperL.release()
-            self.gripperL.rotate(90)
+            self.gripperR.rotate(-90)
             self.gripperL.grasp()
             self.gripperR.release()
             self.gripperL.rotate(-90)
-        elif faceId == 'F':
+        elif faceId == 'R':
             self.gripperL.rotate(180)
+        elif faceId == 'B':
+            self.gripperR.grasp()
+            self.gripperL.release()
+            self.gripperL.rotate(-90)
+            self.gripperL.grasp()
+            self.gripperR.release()
+            self.gripperL.rotate(90)
+        elif faceId == 'F':
+            self.gripperL.rotate(-180)
 
     def finishScan(self):
         self.gripperR.grasp()
         self.gripperL.release()
-        self.gripperL.rotate(-90)
+        self.gripperL.rotate(90)
         self.gripperL.grasp()
 
     def initDemo(self):

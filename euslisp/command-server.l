@@ -16,7 +16,8 @@
   (send *robot* arm :gripper2-r :joint-angle angle))
 
 (defun grasp (arm)
-  (gripper-angle arm 10)
+  (gripper-angle arm
+                 0)
   (send *ri* :angle-vector (send *robot* :angle-vector) 500)
   (send *ri* :wait-interpolation))
 

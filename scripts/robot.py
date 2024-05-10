@@ -31,7 +31,7 @@ class gripper:
 
     def setAngle(self, angle): # absolute angle
         self.angle = angle
-        self.robot.addCommand("(angle %s %d)"%(self.name,angle))
+        self.robot.addCommand("(angle %s %d)"%(self.name, -angle))
 
     def regrasp(self, angle): # absolute angle
         if self.angle == angle:
@@ -146,30 +146,30 @@ class cubeSolver:
     def lookAt(self, faceId):
         if faceId == 'D':
             self.gripperL.release()
-            self.gripperR.rotate(-95)
+            self.gripperR.rotate(95)
         elif faceId == 'U':
-            self.gripperR.rotate(185)
+            self.gripperR.rotate(-185)
         elif faceId == 'L':
-            self.gripperR.rotate(-90)
-            self.gripperL.grasp()
-            self.gripperR.release()
-            self.gripperL.rotate(-90)
-        elif faceId == 'R':
-            self.gripperL.rotate(180)
-        elif faceId == 'B':
-            self.gripperR.grasp()
-            self.gripperL.release()
-            self.gripperL.rotate(-90)
+            self.gripperR.rotate(90)
             self.gripperL.grasp()
             self.gripperR.release()
             self.gripperL.rotate(90)
-        elif faceId == 'F':
+        elif faceId == 'R':
             self.gripperL.rotate(-180)
+        elif faceId == 'B':
+            self.gripperR.grasp()
+            self.gripperL.release()
+            self.gripperL.rotate(90)
+            self.gripperL.grasp()
+            self.gripperR.release()
+            self.gripperL.rotate(-90)
+        elif faceId == 'F':
+            self.gripperL.rotate(180)
 
     def finishScan(self):
         self.gripperR.grasp()
         self.gripperL.release()
-        self.gripperL.rotate(90)
+        self.gripperL.rotate(-90)
         self.gripperL.grasp()
 
     def initDemo(self):

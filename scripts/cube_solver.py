@@ -25,15 +25,15 @@ def send_command(robot):
         res = srv_prox(req)
         return res
     except rospy.ServiceException as e:
-        print("Service call failed: %s"%e)
+        print("Service call failed: %s" % e)
         return None
 
 
 def cube2string(faces):
     indexes = vision.faces2sequence(faces)
-    print("indexes:",indexes)
+    print("indexes:", indexes)
     colorIndex2character = {}
-    for k,v in faces.items():
+    for k, v in faces.items():
         colorIndex2character[v[4]] = k
     ret = ""
     for i in indexes:
@@ -182,9 +182,9 @@ class CubeSolverFSM(object):
         elif self.state == "scan":
             if self.index == self.maxIndex:
                 if self.vision.checkCube(self.vision.faces):
-                    print ("faces:",self.vision.faces)
+                    print("faces:", self.vision.faces)
                     s = cube2string(self.vision.faces)
-                    print ("cube state:",s)
+                    print("cube state:", s)
                     valid = True
                     try:
                         s = kociemba.solve(s)
@@ -197,7 +197,7 @@ class CubeSolverFSM(object):
                         valid = False
                     if valid:
                         self.solveOperations = s.split(' ')
-                        print ("solution:",self.solveOperations)
+                        print("solution:",self.solveOperations)
                         self.speak("解き方がわかりました｡"+str(len(self.solveOperations))+"手で解けます。")
                         self.transitTo("solve", len(self.solveOperations)-1)
                 else:

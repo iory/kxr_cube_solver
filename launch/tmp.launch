@@ -1,6 +1,16 @@
 <launch>
 
-  <arg name="image_topic_name" default="/camera/color/image_raw"/>
+  <!-- <arg name="image_topic_name" default="/camera/color/image_raw"/> -->
+  <arg name="image_topic_name" default="/remote/color/image_raw"/>
+
+
+  <node name="republish"
+        pkg="image_transport" type="republish"
+        args="compressed raw">
+    <remap from="in" to="/camera/color/image_raw"/>
+    <remap from="out" to="/remote/color/image_raw"/>
+  </node>
+
   <!-- <arg name="image_topic_name" default="/usb_cam/image_raw"/> -->
 
   <!-- <arg name="video_device" default="/dev/video0" /> -->

@@ -115,8 +115,8 @@ class CubeSolverFSM(object):
                 elif not self.isMoving():
                     self.finish = True
             else:
-                faceId = self.scanFaceOrder[int(self.index/2)]
-                if self.index%2 == 0:
+                faceId = self.scanFaceOrder[int(self.index / 2)]
+                if self.index % 2 == 0:
                     if self.start:
                         self.robot.lookAt(faceId)
                         self.move()
@@ -234,8 +234,8 @@ def image_cb(msg):
             fsm.robot.addCommand("(send *ri* :servo-on)")
             fsm.robot.addCommand("(init-pose)")
             send_command(fsm.robot)
-            fsm.gripperR.angle = 0
-            fsm.gripperL.angle = 0
+            fsm.robot.gripperR.angle = 0
+            fsm.robot.gripperL.angle = 0
             fsm.autoTransition = False
             fsm.finish = True
             fsm.state = "end"
